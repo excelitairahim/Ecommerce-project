@@ -5,11 +5,11 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:provider/provider.dart';
 
-import '../Google_login/userProfile_screen.dart';
+
 import '../providers/product_provider.dart';
+
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
-
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -24,6 +24,7 @@ class _MyHomePageState extends State<MyHomePage> {
     await googleSignIn.signOut();
     await _auth.signOut();
   }
+
   @override
   void initState() {
     ProductProvider productProvider =
@@ -70,22 +71,20 @@ class _MyHomePageState extends State<MyHomePage> {
             backgroundColor: Colors.grey,
             elevation: 0,
             title: Text("BPPSHOP "),
-         actions: [
-          IconButton(onPressed: (){
-              // });
-                        signOut();
-                        // setState(() {
-                        //   _isSigningOut = false;
-                        // });
-                       // Navigator.pop(context);
-          }, icon: Icon(Icons.delete))
-         ], ),
+            actions: [
+              IconButton(
+                  onPressed: () {
+                    signOut();
+
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(Icons.delete))
+            ],
+          ),
           body: Padding(
             padding: EdgeInsets.all(3.0),
             child: Column(
               children: [
-
-                
                 Container(
                   width: double.infinity,
                   height: 45,
@@ -137,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     Text(
                                       productProvider.data_list[index]['title']
                                           .toString(),
-                                          maxLines: 1,
+                                      maxLines: 1,
                                       style: TextStyle(),
                                     ),
                                     Text(

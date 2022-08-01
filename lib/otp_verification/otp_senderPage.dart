@@ -12,6 +12,8 @@ class SendOTPScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+
     TextEditingController mobileNumber = TextEditingController();
       int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 30;
     var appSignatureID;
@@ -34,7 +36,7 @@ class SendOTPScreen extends StatelessWidget {
       );
     }
 
-    return Scaffold(
+    return Scaffold(key:_scaffoldkey ,
       backgroundColor: Colors.pink,
       body: SafeArea(
         child: Padding(

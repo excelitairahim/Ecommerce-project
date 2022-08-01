@@ -1,18 +1,17 @@
-// import 'package:google_sign_in_web/google_sign_in_web.dart';
 
-// import 'package:flutter_signin_button/flutter_signin_button.dart';
 
+
+
+
+import 'package:fashion_design/providers/login_signup.dart';
+import 'package:fashion_design/screens/bottomnav_bar.dart';
 import 'package:fashion_design/screens/product_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
-
-import 'package:provider/provider.dart';
-
-import '../../Google_login/userProfile_screen.dart';
-import '../../providers/login_signup.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -27,12 +26,12 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController mobileController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  TextEditingController loginpasswordController=TextEditingController();
+  TextEditingController loginpasswordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
   // var isselected = true;
   var isvisible = true;
   var _isvisible = true;
-    Future<User?> signInWithGoogle() async {
+  Future<User?> signInWithGoogle() async {
     try {
       //SIGNING IN WITH GOOGLE
       final GoogleSignInAccount? googleSignInAccount =
@@ -61,9 +60,7 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: ((context) => MyHomePage(
-                   
-                    ))));
+                builder: ((context) => MyHomePage())));
       }
 
       return user;
@@ -71,11 +68,6 @@ class _LoginPageState extends State<LoginPage> {
       print(e);
     }
   }
-
-  // void signOut() async {
-  //   await googleSignIn.signOut();
-  //   await _auth.signOut();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -230,7 +222,9 @@ class _LoginPageState extends State<LoginPage> {
                             height: 10,
                           ),
                           SingUp(
-                              controller:change.isselected? passwordController:loginpasswordController,
+                              controller: change.isselected
+                                  ? passwordController
+                                  : loginpasswordController,
                               validator: (value) {
                                 if (value!.isEmpty) {
                                   return 'Please Enter Password';
@@ -304,9 +298,9 @@ class _LoginPageState extends State<LoginPage> {
                                 height: 16,
                               ),
 
-                            SignInButton(Buttons.Google, onPressed: () {
-            signInWithGoogle();
-          }),
+                              SignInButton(Buttons.Google, onPressed: () {
+                           signInWithGoogle();
+                              }),
                               SizedBox(height: 10),
 
                               // Row(
@@ -353,8 +347,7 @@ class _LoginPageState extends State<LoginPage> {
                   padding: EdgeInsets.all(10),
                   width: 400,
                   decoration: BoxDecoration(
-                      color:
-                          change.isselected ? Colors.grey : Colors.grey[300],
+                      color: change.isselected ? Colors.grey : Colors.grey[300],
                       borderRadius: BorderRadius.circular(35)),
 
                   child: GestureDetector(
@@ -367,7 +360,10 @@ class _LoginPageState extends State<LoginPage> {
 
                           //   ),
                           // );
-                         Navigator.push(context, MaterialPageRoute(builder: ((context) => MyHomePage())));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: ((context) => BottomNavBar())));
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Processing Data')),
@@ -419,7 +415,7 @@ class _LoginPageState extends State<LoginPage> {
         decoration: InputDecoration(
           //  border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
           hintText: hintext,
-          hintStyle: TextStyle(fontSize:12),
+          hintStyle: TextStyle(fontSize: 12),
           //  label: Text(label),
           prefixIcon: Icon(icon),
           suffixIcon: showtex
@@ -450,5 +446,6 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 }
+
 final FirebaseAuth _auth = FirebaseAuth.instance;
-final GoogleSignIn googleSignIn = GoogleSignIn();
+//final GoogleSignIn googleSignIn = GoogleSignIn();

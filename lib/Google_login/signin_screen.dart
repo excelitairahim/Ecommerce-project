@@ -48,7 +48,7 @@ class _LogginScreenState extends State<LogginScreen> {
             MaterialPageRoute(
                 builder: ((context) => UserInfoScreen(
                       user: user,
-                      signin: signin,
+                     
                     ))));
       }
 

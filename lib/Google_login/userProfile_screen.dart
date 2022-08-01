@@ -8,12 +8,13 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
 
 class UserInfoScreen extends StatefulWidget {
-   UserInfoScreen({Key? key, required User user,required signin})
-      : _user = user,islogged=signin,
+  UserInfoScreen({Key? key, required User user, })
+      : _user = user,
+    
         super(key: key);
 
   final User _user;
-  bool islogged=false;
+  bool islogged = false;
 
   @override
   _UserInfoScreenState createState() => _UserInfoScreenState();
@@ -27,11 +28,9 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
     await _auth.signOut();
   }
 
-
-bool? isloging;
+  bool? isloging;
   @override
   void initState() {
-  
     print(widget.islogged);
     _user = widget._user;
 
@@ -76,12 +75,14 @@ bool? isloging;
                       ),
                     ),
               SizedBox(height: 16.0),
-     _user.emailVerified ==false?     Text(
-                'Hello',
-                style: TextStyle(
-                  fontSize: 26,
-                ),
-              ):Container(),
+              _user.emailVerified == false
+                  ? Text(
+                      'Hello',
+                      style: TextStyle(
+                        fontSize: 26,
+                      ),
+                    )
+                  : Container(),
               SizedBox(height: 8.0),
               Text(
                 _user.displayName!,
