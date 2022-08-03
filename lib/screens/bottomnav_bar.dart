@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 
 
 import 'package:badges/badges.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/cart_provider.dart';
 
 class BottomNavBar extends StatefulWidget {
   BottomNavBar(
@@ -39,35 +42,36 @@ class _BottomNavBarState extends State<BottomNavBar> {
         child: currentScreen,
         bucket: bucket,
       ),
-      floatingActionButton: FloatingActionButton(
-          backgroundColor: Color(0xFFE37D4E),
-          onPressed: () {
-            // Navigator.of(context)
-            //     .push(MaterialPageRoute(builder: (context) => OrderDetails()));
-          },
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Center(
-              child: Badge(
-                badgeContent: Text(
-                  itemCount.toString(),
-                  style: TextStyle(color: Colors.white),
-                ),
-                child: Icon(Icons.shopping_bag_outlined),
-              ),
-            ),
-          )),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // floatingActionButton: FloatingActionButton(
+      //     backgroundColor: Color(0xFFE37D4E),
+      //     onPressed: () {
+      //       // Navigator.of(context)
+      //       //     .push(MaterialPageRoute(builder: (context) => OrderDetails()));
+      //     },
+      //     child: Padding(
+      //       padding: EdgeInsets.all(16.0),
+      //       child: Center(
+      //         child: Badge(
+      //           badgeContent: Text(
+      //             itemCount.toString(),
+      //             style: TextStyle(color: Colors.white),
+      //           ),
+      //           child: Icon(Icons.shopping_bag_outlined),
+      //         ),
+      //       ),
+      //     )),
+      //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
-        shape: CircularNotchedRectangle(),
-        notchMargin: 6,
+        // shape: CircularNotchedRectangle(),
+        // notchMargin: 6,
         child: Container(
           height: 60,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+               // crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   MaterialButton(
                     minWidth: 40,
@@ -145,13 +149,24 @@ class _BottomNavBarState extends State<BottomNavBar> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Icon(
-                          Icons.dashboard_outlined,
-                          color:
-                              currentTab == 2 ? Color(0xFFE37D4E) : Colors.grey,
+                        Badge(badgeContent: Consumer<CartProvider>(
+              builder: (context, value, child) {
+                return Text(
+                  value.counter.toString(),
+                  style: const TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                );
+              },
+            ),
+          //  position: const BadgePosition(start: 30, bottom: 30),
+                          child: Icon(
+                            Icons.shopping_cart,
+                            color:
+                                currentTab == 2 ? Color(0xFFE37D4E) : Colors.grey,
+                          ),
                         ),
                         Text(
-                          'History',
+                          'Cart',
                           style: TextStyle(
                             color: currentTab == 2
                                 ? Color(0xFFE37D4E)

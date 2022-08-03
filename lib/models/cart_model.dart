@@ -11,7 +11,7 @@ class Cart {
   final String? image;
 
   Cart(
-      {required this.id,
+      {this.id,
       required this.productId,
       required this.productName,
       required this.initialPrice,

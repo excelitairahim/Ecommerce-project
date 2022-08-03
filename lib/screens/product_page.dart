@@ -1,10 +1,12 @@
+import 'package:fashion_design/providers/cart_provider.dart';
+import 'package:fashion_design/screens/login_signup.dart/login_and_signup.dart';
+import 'package:fashion_design/screens/products_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:provider/provider.dart';
-
 
 import '../providers/product_provider.dart';
 
@@ -30,12 +32,16 @@ class _MyHomePageState extends State<MyHomePage> {
     ProductProvider productProvider =
         Provider.of<ProductProvider>(context, listen: false);
     productProvider.getdata();
-
+    CartProvider cart = Provider.of<CartProvider>(context, listen: false);
+    cart.getCounter();
     super.initState();
   }
 
   Widget build(BuildContext context) {
     ProductProvider productProvider = Provider.of<ProductProvider>(
+      context,
+    );
+    CartProvider cart = Provider.of<CartProvider>(
       context,
     );
     List men = productProvider.data_list
@@ -72,13 +78,24 @@ class _MyHomePageState extends State<MyHomePage> {
             elevation: 0,
             title: Text("BPPSHOP "),
             actions: [
-              IconButton(
+              MaterialButton(
                   onPressed: () {
                     signOut();
 
-                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
                   },
-                  icon: Icon(Icons.delete))
+                  child: Container(
+                    color: Colors.blueGrey,
+                    padding: EdgeInsets.all(10),
+                    child: Text('SignOut'),
+                  )),
+              // IconButton(
+              //     onPressed: () {
+              //       signOut();
+
+              //       Navigator.pop(context);
+              //     },
+              //     icon: Icon(Icons.delete))
             ],
           ),
           body: Padding(
@@ -124,27 +141,54 @@ class _MyHomePageState extends State<MyHomePage> {
                               physics: NeverScrollableScrollPhysics(),
                               itemCount: productProvider.data_list.length,
                               itemBuilder: (BuildContext context, int index) {
-                                return Card(
-                                    child: Column(
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                          child: Image.network(productProvider
-                                              .data_list[index]['image']
-                                              .toString())),
-                                    ),
-                                    Text(
-                                      productProvider.data_list[index]['title']
-                                          .toString(),
-                                      maxLines: 1,
-                                      style: TextStyle(),
-                                    ),
-                                    Text(
-                                      'Price ${productProvider.data_list[index]['price'].toString()}',
-                                      style: TextStyle(),
-                                    )
-                                  ],
-                                ));
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: ((context) =>
+                                                ProductsDetails(
+                                                  productPrice: productProvider
+                                                          .data_list[index]
+                                                      ['price'],
+                                                  productName: productProvider
+                                                          .data_list[index]
+                                                      ['title'],
+                                                  products_details:
+                                                      productProvider
+                                                              .data_list[index]
+                                                          ['description'],
+                                                  productsImage: productProvider
+                                                          .data_list[index]
+                                                      ['image'],
+                                                ))));
+                                  },
+                                  child: Container(
+                                    child: Card(
+                                        child: Column(
+                                      children: [
+                                        Expanded(
+                                          child: Container(
+                                              child: Image.network(
+                                                  productProvider
+                                                      .data_list[index]['image']
+                                                      .toString())),
+                                        ),
+                                        Text(
+                                          productProvider.data_list[index]
+                                                  ['title']
+                                              .toString(),
+                                          maxLines: 1,
+                                          style: TextStyle(),
+                                        ),
+                                        Text(
+                                          'Price ${productProvider.data_list[index]['price'].toString()}',
+                                          style: TextStyle(),
+                                        )
+                                      ],
+                                    )),
+                                  ),
+                                );
                               })
                         ],
                       ),
@@ -189,38 +233,35 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                     SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          GridView.builder(
-                              itemCount: jewelery.length,
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                childAspectRatio: 1,
+                      child: GridView.builder(
+                          itemCount: jewelery.length,
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 1,
+                          ),
+                          itemBuilder: (context, index) {
+                            return Card(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                      child: Expanded(
+                                    child: Image.network(
+                                        jewelery[index]['image'].toString()),
+                                  )),
+                                  Text(jewelery[index]['title'].toString()),
+                                  Text(
+                                    'Price ${jewelery[index]['price'].toString()}',
+                                    style: TextStyle(),
+                                  )
+                                ],
                               ),
-                              itemBuilder: (context, index) {
-                                return Card(
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                          child: Expanded(
-                                        child: Image.network(jewelery[index]
-                                                ['image']
-                                            .toString()),
-                                      )),
-                                      Text(jewelery[index]['title'].toString()),
-                                      Text(
-                                        'Price ${jewelery[index]['price'].toString()}',
-                                        style: TextStyle(),
-                                      )
-                                    ],
-                                  ),
-                                );
-                              })
-                        ],
-                      ),
+                            );
+                          }),
                     ),
                     SingleChildScrollView(
                       child: Column(
