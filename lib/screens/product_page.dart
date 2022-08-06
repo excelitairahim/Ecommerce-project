@@ -1,13 +1,17 @@
+import 'package:expandable/expandable.dart';
 import 'package:fashion_design/providers/cart_provider.dart';
 import 'package:fashion_design/screens/login_signup.dart/login_and_signup.dart';
 import 'package:fashion_design/screens/products_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import 'package:provider/provider.dart';
 
+import '../api_service/pagination_service.dart';
 import '../providers/product_provider.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -82,7 +86,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {
                     signOut();
 
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => LoginPage()));
                   },
                   child: Container(
                     color: Colors.blueGrey,
@@ -143,25 +148,59 @@ class _MyHomePageState extends State<MyHomePage> {
                               itemBuilder: (BuildContext context, int index) {
                                 return GestureDetector(
                                   onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: ((context) =>
-                                                ProductsDetails(
-                                                  productPrice: productProvider
-                                                          .data_list[index]
-                                                      ['price'],
-                                                  productName: productProvider
-                                                          .data_list[index]
-                                                      ['title'],
-                                                  products_details:
-                                                      productProvider
-                                                              .data_list[index]
-                                                          ['description'],
-                                                  productsImage: productProvider
-                                                          .data_list[index]
-                                                      ['image'],
-                                                ))));
+                                    var id =
+                                        productProvider.data_list[index]['id'];
+                                    var price = productProvider.data_list[index]
+                                        ['price'];
+                                    var name = productProvider.data_list[index]
+                                        ['title'];
+                                    var details = productProvider
+                                        .data_list[index]['description'];
+                                    var image = productProvider.data_list[index]
+                                        ['image'];
+                                    print(price);
+                                    showModalBottomSheet(
+                                        useRootNavigator: true,
+                                         isScrollControlled: true,
+                                        context: context,
+                                        builder: (BuildContext context) => Container(
+                                            height: 500,
+                                            child:
+                                            ProductsDetails2(
+                                                productPrice: productProvider
+                                                        .data_list[index]
+                                                    ['price'],
+                                                productName: productProvider
+                                                        .data_list[index]
+                                                    ['title'],
+                                                products_details:
+                                                    productProvider
+                                                            .data_list[index]
+                                                        ['description'],
+                                                productsImage: productProvider
+                                                        .data_list[index]
+                                                    ['image'],
+                                              ))
+                                            );
+                                    // Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //         builder: ((context) =>
+                                    //             ProductsDetails(
+                                    //               productPrice: productProvider
+                                    //                       .data_list[index]
+                                    //                   ['price'],
+                                    //               productName: productProvider
+                                    //                       .data_list[index]
+                                    //                   ['title'],
+                                    //               products_details:
+                                    //                   productProvider
+                                    //                           .data_list[index]
+                                    //                       ['description'],
+                                    //               productsImage: productProvider
+                                    //                       .data_list[index]
+                                    //                   ['image'],
+                                    //             ))));
                                   },
                                   child: Container(
                                     child: Card(
@@ -340,6 +379,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+// 
 
 class MyTabbedPage extends StatefulWidget {
   const MyTabbedPage({Key? key}) : super(key: key);

@@ -1,3 +1,4 @@
+import 'package:fashion_design/main.dart';
 import 'package:fashion_design/screens/cart_screen.dart';
 import 'package:fashion_design/screens/login_signup.dart/login_and_signup.dart';
 import 'package:fashion_design/screens/product_list.dart';
@@ -28,7 +29,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   int currentTab; // to keep track of active tab index
   final List<Widget> screens = [
     MyHomePage(),
-    ProductList(),
+   paginationpage2(),
     CartScreen(),
     LoginPage(),
   ]; // to store nested tabs
@@ -106,7 +107,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                     onPressed: () {
                       setState(() {
                         currentScreen =
-                            ProductList(); // if user taps on this dashboard tab will be active
+                            paginationpage2(); // if user taps on this dashboard tab will be active
                         currentTab = 1;
                       });
                     },

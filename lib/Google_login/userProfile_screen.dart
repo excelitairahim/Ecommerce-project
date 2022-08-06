@@ -1,8 +1,10 @@
 import 'package:fashion_design/Google_login/signin_screen.dart';
 import 'package:fashion_design/main.dart';
+import 'package:fashion_design/providers/tokenstoreprovider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -31,14 +33,24 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
   bool? isloging;
   @override
   void initState() {
+   TokenProvider tokenProvider=Provider.of(context,listen: false);
     print(widget.islogged);
     _user = widget._user;
-
+//print(tokenProvider.token);
+tokenProvider.gettoken();
+print(  'ddddddd${tokenProvider.useremail}');
+print(  'ddddddd${tokenProvider.usernam}');
     super.initState();
+   // gettoken();
   }
-
+// gettoken()async{
+//       TokenProvider tokenProvider=Provider.of(context,listen: false);
+//       final data=await tokenProvider.gettoken();
+//  return data;
+// }
   @override
   Widget build(BuildContext context) {
+      TokenProvider tokenProvider=Provider.of(context,);
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -123,6 +135,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                         // setState(() {
                         //   _isSigningOut = true;
                         // });
+                     tokenProvider.remove();
                         signOut();
                         // setState(() {
                         //   _isSigningOut = false;

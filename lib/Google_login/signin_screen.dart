@@ -1,12 +1,13 @@
 //import 'package:fashion_design/Google_login/gobal.dart';
 import 'package:fashion_design/Google_login/userProfile_screen.dart';
+import 'package:fashion_design/providers/tokenstoreprovider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
+import 'package:provider/provider.dart';
 
 class LogginScreen extends StatefulWidget {
   @override
@@ -16,7 +17,7 @@ class LogginScreen extends StatefulWidget {
 class _LogginScreenState extends State<LogginScreen> {
   bool signin = true;
   //String daa='hi';
- 
+
   Future<User?> signInWithGoogle() async {
     try {
       //SIGNING IN WITH GOOGLE
@@ -33,7 +34,7 @@ class _LogginScreenState extends State<LogginScreen> {
       //SIGNING IN WITH CREDENTIAL & MAKING A USER IN FIREBASE  AND GETTING USER CLASS
       final userCredential = await _auth.signInWithCredential(credential);
       final User? user = userCredential.user;
-
+      TokenProvider? tokenProvider;
       //CHECKING IS ON
       assert(!user!.isAnonymous);
       assert(await user!.getIdToken() != null);
@@ -48,8 +49,9 @@ class _LogginScreenState extends State<LogginScreen> {
             MaterialPageRoute(
                 builder: ((context) => UserInfoScreen(
                       user: user,
-                     
                     ))));
+        tokenProvider!.settoken('key', user.displayName);
+        print('kkk${tokenProvider.gettoken()}');
       }
 
       return user;
@@ -64,13 +66,40 @@ class _LogginScreenState extends State<LogginScreen> {
   }
 
   @override
+  void initState() {
+    TokenProvider tokenProvider =
+        Provider.of<TokenProvider>(context, listen: false);
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    TokenProvider tokenProvider = Provider.of<TokenProvider>(
+      context,
+    );
     return Scaffold(
       body: Center(
           child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SignInButton(Buttons.Google, onPressed: () {
-            signInWithGoogle();
+          SignInButton(Buttons.Google, onPressed: () async {
+            final GoogleSignInAccount? googleSignInAccount =
+                await googleSignIn.signIn();
+            final GoogleSignInAuthentication googleSignInAuthentication =
+                await googleSignInAccount!.authentication;
+            final AuthCredential credential = GoogleAuthProvider.credential(
+                idToken: googleSignInAuthentication.idToken,
+                accessToken: googleSignInAuthentication.accessToken);
+            final userCredential = await _auth.signInWithCredential(credential);
+            final User? user = userCredential.user;
+            tokenProvider.settoken('email', user!.email);
+             //  tokenProvider.settoken('islogged', user.emailVerified);
+                  tokenProvider.settoken('image', user.photoURL);
+             tokenProvider.settoken('name', user.displayName);
+            signInWithGoogle().then((value) {});
+            
           }),
           ElevatedButton(onPressed: signOut, child: Text('SignOut'))
         ],
