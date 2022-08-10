@@ -1,6 +1,7 @@
 //import 'package:fashion_design/Google_login/gobal.dart';
 import 'package:fashion_design/Google_login/userProfile_screen.dart';
 import 'package:fashion_design/providers/tokenstoreprovider.dart';
+import 'package:fashion_design/screens/bottomnav_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -44,14 +45,13 @@ class _LogginScreenState extends State<LogginScreen> {
       print(user);
 
       if (user != null) {
-        Navigator.push(
+        Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: ((context) => UserInfoScreen(
-                      user: user,
+                builder: ((context) => BottomNavBar(
+             
                     ))));
-        tokenProvider!.settoken('key', user.displayName);
-        print('kkk${tokenProvider.gettoken()}');
+        
       }
 
       return user;
@@ -95,13 +95,13 @@ class _LogginScreenState extends State<LogginScreen> {
             final userCredential = await _auth.signInWithCredential(credential);
             final User? user = userCredential.user;
             tokenProvider.settoken('email', user!.email);
-             //  tokenProvider.settoken('islogged', user.emailVerified);
-                  tokenProvider.settoken('image', user.photoURL);
+             setbooltoken('islogged', user.emailVerified);
+                  tokenProvider.setImageToken ('image', user.photoURL);
              tokenProvider.settoken('name', user.displayName);
             signInWithGoogle().then((value) {});
             
           }),
-          ElevatedButton(onPressed: signOut, child: Text('SignOut'))
+          // ElevatedButton(onPressed: signOut, child: Text('SignOut'))
         ],
       )),
     );

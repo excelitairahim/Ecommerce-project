@@ -19,7 +19,7 @@ class PaginationPage extends StatefulWidget {
 class _PaginationPageState extends State<PaginationPage> {
   List<PaginationModel> pagi_datalist = [];
   int _page = 1;
-  int _limit = 10;
+  int _limit = 20;
 
   // There is next page or not
   bool _hasNextPage = true;
@@ -123,7 +123,6 @@ class _PaginationPageState extends State<PaginationPage> {
                       itemBuilder: (BuildContext context, int index) {
                         return GestureDetector(
                           onTap: () {
-                            
                             // Navigator.push(
                             //     context,
                             //     MaterialPageRoute(
@@ -171,21 +170,30 @@ class _PaginationPageState extends State<PaginationPage> {
                       }),
                   if (_isLoadMoreRunning == true)
                     Padding(
-                      padding: const EdgeInsets.only(top: 10, bottom: 40),
+                      padding: const EdgeInsets.only(top: 0, bottom: 0),
                       child: Center(
-                        child: CircularProgressIndicator(),
+                        child:  Container(
+                    color: Colors.white,
+                    child: Center(
+                      child: Text('Loading More Products'),
+                    ),
+                  ),
                       ),
                     ),
 
-                  // When nothing else to load                 if (_hasNextPage == false)
+                  // When nothing else to load 
+                                  _hasNextPage == false?
                   Container(
-                    padding: const EdgeInsets.only(top: 10, bottom: 10),
                     color: Colors.white,
                     child: Center(
                       child: Text('You have fetched all of the content'),
                     ),
-                  ),
-                ],
+                  ): Container(
+                    color: Colors.white,
+                    child: Center(
+                      child: Text('You have fetched all of the content'),
+                    ),
+                  )],
               ))
             ],
           ),

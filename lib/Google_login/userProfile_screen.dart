@@ -1,6 +1,7 @@
 import 'package:fashion_design/Google_login/signin_screen.dart';
 import 'package:fashion_design/main.dart';
 import 'package:fashion_design/providers/tokenstoreprovider.dart';
+import 'package:fashion_design/screens/bottomnav_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -10,21 +11,21 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
 
 class UserInfoScreen extends StatefulWidget {
-  UserInfoScreen({Key? key, required User user, })
-      : _user = user,
+  // UserInfoScreen({Key? key, required User user, })
+  //     : _user = user,
     
-        super(key: key);
+  //       super(key: key);
 
-  final User _user;
-  bool islogged = false;
+  // final User _user;
+  // bool islogged = false;
 
   @override
   _UserInfoScreenState createState() => _UserInfoScreenState();
 }
 
 class _UserInfoScreenState extends State<UserInfoScreen> {
-  late User _user;
-  bool _isSigningOut = false;
+  // late User _user;
+  // bool _isSigningOut = false;
   void signOut() async {
     await googleSignIn.signOut();
     await _auth.signOut();
@@ -34,8 +35,8 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
   @override
   void initState() {
    TokenProvider tokenProvider=Provider.of(context,listen: false);
-    print(widget.islogged);
-    _user = widget._user;
+    // print(widget.islogged);
+    // _user = widget._user;
 //print(tokenProvider.token);
 tokenProvider.gettoken();
 print(  'ddddddd${tokenProvider.useremail}');
@@ -52,9 +53,7 @@ print(  'ddddddd${tokenProvider.usernam}');
   Widget build(BuildContext context) {
       TokenProvider tokenProvider=Provider.of(context,);
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-      ),
+    appBar: AppBar(title: Text('Profile'),centerTitle: true,elevation: 0,backgroundColor: Colors.grey,),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(
@@ -66,11 +65,11 @@ print(  'ddddddd${tokenProvider.usernam}');
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Row(),
-              _user.photoURL != null
+           tokenProvider. islogged ==true
                   ? ClipOval(
                       child: Material(
                         child: Image.network(
-                          _user.photoURL!,
+                       tokenProvider.image!,
                           fit: BoxFit.fitHeight,
                         ),
                       ),
@@ -87,7 +86,7 @@ print(  'ddddddd${tokenProvider.usernam}');
                       ),
                     ),
               SizedBox(height: 16.0),
-              _user.emailVerified == false
+         tokenProvider.islogged == false
                   ? Text(
                       'Hello',
                       style: TextStyle(
@@ -97,14 +96,14 @@ print(  'ddddddd${tokenProvider.usernam}');
                   : Container(),
               SizedBox(height: 8.0),
               Text(
-                _user.displayName!,
+                tokenProvider.usernam!,
                 style: TextStyle(
                   fontSize: 26,
                 ),
               ),
               SizedBox(height: 8.0),
               Text(
-                '( ${_user.email!} )',
+                ' ${tokenProvider.useremail!} ',
                 style: TextStyle(
                   fontSize: 20,
                   letterSpacing: 0.5,
@@ -116,11 +115,7 @@ print(  'ddddddd${tokenProvider.usernam}');
                 style: TextStyle(fontSize: 14, letterSpacing: 0.2),
               ),
               SizedBox(height: 16.0),
-              _isSigningOut
-                  ? CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    )
-                  : ElevatedButton(
+            ElevatedButton(
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(
                           Colors.redAccent,
@@ -135,12 +130,14 @@ print(  'ddddddd${tokenProvider.usernam}');
                         // setState(() {
                         //   _isSigningOut = true;
                         // });
-                     tokenProvider.remove();
+                    // tokenProvider.remove();
                         signOut();
+                        tokenProvider.islogged=false;
                         // setState(() {
                         //   _isSigningOut = false;
                         // });
-                        Navigator.pop(context);
+                        print(tokenProvider.islogged);
+                       // Navigator.pushReplacement(context, MaterialPageRoute(builder: ((context) => BottomNavBar())));
                       },
                       child: Padding(
                         padding: EdgeInsets.only(top: 8.0, bottom: 8.0),

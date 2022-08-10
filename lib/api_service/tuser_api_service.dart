@@ -37,7 +37,7 @@ class ApiService2 {
       if (response.statusCode == 200) {
         data = convert.jsonDecode(response.body);
         result = data.map((value) => value as Map<String, dynamic>).toList();
-       print(response.body);
+      // print(response.body);
         return result;
       }
     } catch (e) {

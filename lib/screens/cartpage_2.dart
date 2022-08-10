@@ -1,11 +1,11 @@
 import 'package:badges/badges.dart';
 import 'package:fashion_design/database/db_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:provider/provider.dart';
 
 import '../models/cart_model.dart';
 import '../providers/cart_provider.dart';
-
 
 class CartScreen2 extends StatefulWidget {
   const CartScreen2({
@@ -31,26 +31,37 @@ class _CartScreenState extends State<CartScreen2> {
     final cart = Provider.of<CartProvider>(context);
     return Scaffold(
       appBar: AppBar(
+        leading: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Icon(
+              Icons.arrow_back_ios,
+              color: Colors.black,
+            )),
         centerTitle: true,
-        backgroundColor: Color.fromARGB(255, 113, 174, 225),
-        title: const Text('My Shopping Cart'),
+        backgroundColor: Colors.grey[300],
+        title: const Text(
+          ' Shopping Cart',
+          style: TextStyle(color: Colors.black),
+        ),
         actions: [
-          Badge(
-            badgeContent: Consumer<CartProvider>(
-              builder: (context, value, child) {
-                return Text(
-                  value.counter.toString(),
-                  style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                );
-              },
-            ),
-            position: const BadgePosition(start: 30, bottom: 30),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.shopping_cart),
-            ),
-          ),
+          // Badge(
+          //   badgeContent: Consumer<CartProvider>(
+          //     builder: (context, value, child) {
+          //       return Text(
+          //         value.counter.toString(),
+          //         style: const TextStyle(
+          //             color: Colors.white, fontWeight: FontWeight.bold),
+          //       );
+          //     },
+          //   ),
+          //   position: const BadgePosition(start: 30, bottom: 30),
+          //   child: IconButton(
+          //     onPressed: () {},
+          //     icon: const Icon(Icons.shopping_cart),
+          //   ),
+          // ),
           const SizedBox(
             width: 20.0,
           ),
@@ -74,7 +85,7 @@ class _CartScreenState extends State<CartScreen2> {
                       itemCount: provider.cart.length,
                       itemBuilder: (context, index) {
                         return Card(
-                         // color: Colors.blueGrey.shade200,
+                          // color: Colors.blueGrey.shade200,
                           elevation: 5.0,
                           child: Padding(
                             padding: const EdgeInsets.all(4.0),
@@ -91,7 +102,9 @@ class _CartScreenState extends State<CartScreen2> {
                                 SizedBox(
                                   width: 170,
                                   child: Container(
-                                    child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
@@ -104,7 +117,8 @@ class _CartScreenState extends State<CartScreen2> {
                                           text: TextSpan(
                                               text: 'Name: ',
                                               style: TextStyle(
-                                                  color: Colors.blueGrey.shade800,
+                                                  color:
+                                                      Colors.blueGrey.shade800,
                                                   fontSize: 16.0),
                                               children: [
                                                 TextSpan(
@@ -120,7 +134,8 @@ class _CartScreenState extends State<CartScreen2> {
                                           text: TextSpan(
                                               text: 'Unit: ',
                                               style: TextStyle(
-                                                  color: Colors.blueGrey.shade800,
+                                                  color:
+                                                      Colors.blueGrey.shade800,
                                                   fontSize: 16.0),
                                               children: [
                                                 TextSpan(
@@ -136,7 +151,8 @@ class _CartScreenState extends State<CartScreen2> {
                                           text: TextSpan(
                                               text: 'Price: ' r"$",
                                               style: TextStyle(
-                                                  color: Colors.blueGrey.shade800,
+                                                  color:
+                                                      Colors.blueGrey.shade800,
                                                   fontSize: 16.0),
                                               children: [
                                                 TextSpan(
@@ -151,21 +167,27 @@ class _CartScreenState extends State<CartScreen2> {
                                     ),
                                   ),
                                 ),
-                                Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
                                   children: [
                                     GestureDetector(
                                         onTap: () {
-                                          dbHelper!.deleteCartItem(
-                                              provider.cart[index].id!);
-                                          provider.removeItem(
-                                              provider.cart[index].id!);
+                                          dbHelper!.deleteCartItem(int.parse(
+                                              provider.cart[index].id!
+                                                  .toString()));
+                                          provider.removeItem(int.parse(provider
+                                              .cart[index].id!
+                                              .toString()));
                                           provider.removeCounter();
                                         },
                                         child: Icon(
                                           Icons.delete,
                                           color: Colors.red.shade800,
                                         )),
-                                        SizedBox(height: 15,),
+                                    SizedBox(
+                                      height: 15,
+                                    ),
                                     ValueListenableBuilder<int>(
                                         valueListenable:
                                             provider.cart[index].quantity!,
@@ -291,21 +313,41 @@ class PlusMinusButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-      SizedBox(width: 10,),  Container(
-          alignment: Alignment.center,
-      
+        SizedBox(
+          width: 10,
+        ),
+        Container(
+            alignment: Alignment.center,
             decoration: BoxDecoration(
                 color: Colors.black.withOpacity(.2),
                 borderRadius: BorderRadius.circular(50)),
             child: GestureDetector(
-                onTap: deleteQuantity, child:  Center(child: Icon(Icons.remove,size: 22,)))),
-     SizedBox(width: 10,),   Text(text,style: TextStyle(fontSize: 17 ),),SizedBox(width: 10,),
+                onTap: deleteQuantity,
+                child: Center(
+                    child: Icon(
+                  Icons.remove,
+                  size: 22,
+                )))),
+        SizedBox(
+          width: 10,
+        ),
+        Text(
+          text,
+          style: TextStyle(fontSize: 17),
+        ),
+        SizedBox(
+          width: 10,
+        ),
         Container(
             decoration: BoxDecoration(
                 color: Colors.black.withOpacity(.2),
                 borderRadius: BorderRadius.circular(50)),
             child: GestureDetector(
-                onTap: addQuantity, child: const Icon(Icons.add,size: 22,))),
+                onTap: addQuantity,
+                child: const Icon(
+                  Icons.add,
+                  size: 22,
+                ))),
       ],
     );
   }
@@ -324,12 +366,10 @@ class ReusableWidget extends StatelessWidget {
         children: [
           Text(
             title,
-            style: Theme.of(context).textTheme.subtitle1,
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
           ),
-          Text(
-            value.toString(),
-            style: Theme.of(context).textTheme.subtitle2,
-          ),
+          Text(value.toString(),
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
         ],
       ),
     );

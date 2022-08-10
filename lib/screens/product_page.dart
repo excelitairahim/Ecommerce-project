@@ -82,18 +82,18 @@ class _MyHomePageState extends State<MyHomePage> {
             elevation: 0,
             title: Text("BPPSHOP "),
             actions: [
-              MaterialButton(
-                  onPressed: () {
-                    signOut();
+              // MaterialButton(
+              //     onPressed: () {
+              //       signOut();
 
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => LoginPage()));
-                  },
-                  child: Container(
-                    color: Colors.blueGrey,
-                    padding: EdgeInsets.all(10),
-                    child: Text('SignOut'),
-                  )),
+              //       Navigator.push(context,
+              //           MaterialPageRoute(builder: (context) => LoginPage()));
+              //     },
+              //     child: Container(
+              //       color: Colors.blueGrey,
+              //       padding: EdgeInsets.all(10),
+              //       child: Text('SignOut'),
+              //     )),
               // IconButton(
               //     onPressed: () {
               //       signOut();
@@ -152,13 +152,14 @@ class _MyHomePageState extends State<MyHomePage> {
                                         productProvider.data_list[index]['id'];
                                     var price = productProvider.data_list[index]
                                         ['price'];
-                                    var name = productProvider.data_list[index]
-                                        ['title'];
-                                    var details = productProvider
-                                        .data_list[index]['description'];
-                                    var image = productProvider.data_list[index]
-                                        ['image'];
-                                    print(price);
+                                    // var name = productProvider.data_list[index]
+                                    //     ['title'];
+                                    // var details = productProvider
+                                    //     .data_list[index]['description'];
+                                    // var image = productProvider.data_list[index]
+                                    //     ['image'];
+                                   // print(price);
+                                    //print(id);
                                     showModalBottomSheet(
                                         useRootNavigator: true,
                                          isScrollControlled: true,
@@ -166,10 +167,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                         builder: (BuildContext context) => Container(
                                             height: 500,
                                             child:
-                                            ProductsDetails2(
-                                                productPrice: productProvider
-                                                        .data_list[index]
-                                                    ['price'],
+                                            ProductsDetails(
+                                              productId: id.toString(),
+                                                productPrice: price.toInt(),
                                                 productName: productProvider
                                                         .data_list[index]
                                                     ['title'],

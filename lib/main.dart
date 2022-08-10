@@ -14,6 +14,7 @@ import 'package:fashion_design/screens/product_page.dart';
 import 'package:fashion_design/screens/products_details.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -53,7 +54,7 @@ class _paginationpage2State extends State<paginationpage2> {
 
   // At the beginning, we fetch the first 20 posts
    int _page = 0;
-  int _limit = 10;
+  int _limit = 20;
 
   // There is next page or not
   bool _hasNextPage = true;
@@ -144,6 +145,8 @@ class _paginationpage2State extends State<paginationpage2> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+     backgroundColor: Colors.grey,
+            elevation: 0,
         title: Text('Pagination Products'),
         centerTitle: true,
       ),
@@ -221,23 +224,28 @@ class _paginationpage2State extends State<paginationpage2> {
 
                 // when the _loadMore function is running
                 if (_isLoadMoreRunning == true)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10, bottom: 40),
+                   Padding(
+                      padding: const EdgeInsets.only(top: 10, bottom: 10),
+                      child: Center(
+                        child:  Container(
+                   // color: Colors.white,
                     child: Center(
-                      child: CircularProgressIndicator(),
+                      child: Text('Loading More Products',style: TextStyle(color: Colors.blue,fontWeight: FontWeight.w600),),
                     ),
                   ),
+                      ),
+                    ),
 
                 // When nothing else to load
                 if (_hasNextPage == false)
                   Container(
-                    padding: const EdgeInsets.only(top: 30, bottom: 40),
-                    color: Colors.amber,
+                    padding: const EdgeInsets.only(top: 0, bottom: 0),
+                    //color: Colors.amber,
                     child: Center(
-                      child: Text('You have fetched all of the content'),
+                      child: Text('You have fetched all of the content',style:TextStyle(color:Colors.red,fontWeight:FontWeight.w600,),
                     ),
                   ),
-              ],
+          )],
             ),
     );
   }

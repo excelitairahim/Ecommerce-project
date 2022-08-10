@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import '../models/cart_model.dart';
 import '../providers/cart_provider.dart';
 
-
 class CartScreen extends StatefulWidget {
   const CartScreen({
     Key? key,
@@ -22,6 +21,9 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   void initState() {
+    setState(() {
+      
+    });
     super.initState();
     context.read<CartProvider>().getData();
   }
@@ -32,25 +34,25 @@ class _CartScreenState extends State<CartScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Color.fromARGB(255, 113, 174, 225),
-        title: const Text('My Shopping Cart'),
+        backgroundColor: Colors.grey,elevation: 0,
+        title: const Text(' Shopping Cart'),
         actions: [
-          Badge(
-            badgeContent: Consumer<CartProvider>(
-              builder: (context, value, child) {
-                return Text(
-                  value.counter.toString(),
-                  style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                );
-              },
-            ),
-            position: const BadgePosition(start: 30, bottom: 30),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.shopping_cart),
-            ),
-          ),
+          // Badge(
+          //   badgeContent: Consumer<CartProvider>(
+          //     builder: (context, value, child) {
+          //       return Text(
+          //         value.counter.toString(),
+          //         style: const TextStyle(
+          //             color: Colors.white, fontWeight: FontWeight.bold),
+          //       );
+          //     },
+          //   ),
+          //   position: const BadgePosition(start: 30, bottom: 30),
+          //   child: IconButton(
+          //     onPressed: () {},
+          //     icon: const Icon(Icons.shopping_cart),
+          //   ),
+          // ),
           const SizedBox(
             width: 20.0,
           ),
@@ -74,7 +76,7 @@ class _CartScreenState extends State<CartScreen> {
                       itemCount: provider.cart.length,
                       itemBuilder: (context, index) {
                         return Card(
-                         // color: Colors.blueGrey.shade200,
+                          // color: Colors.blueGrey.shade200,
                           elevation: 5.0,
                           child: Padding(
                             padding: const EdgeInsets.all(4.0),
@@ -86,12 +88,14 @@ class _CartScreenState extends State<CartScreen> {
                                   height: 80,
                                   width: 80,
                                   image:
-                                      AssetImage(provider.cart[index].image!),
+                                      NetworkImage(provider.cart[index].image!),
                                 ),
                                 SizedBox(
                                   width: 170,
                                   child: Container(
-                                    child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
@@ -104,7 +108,8 @@ class _CartScreenState extends State<CartScreen> {
                                           text: TextSpan(
                                               text: 'Name: ',
                                               style: TextStyle(
-                                                  color: Colors.blueGrey.shade800,
+                                                  color:
+                                                      Colors.blueGrey.shade800,
                                                   fontSize: 16.0),
                                               children: [
                                                 TextSpan(
@@ -120,7 +125,8 @@ class _CartScreenState extends State<CartScreen> {
                                           text: TextSpan(
                                               text: 'Unit: ',
                                               style: TextStyle(
-                                                  color: Colors.blueGrey.shade800,
+                                                  color:
+                                                      Colors.blueGrey.shade800,
                                                   fontSize: 16.0),
                                               children: [
                                                 TextSpan(
@@ -136,7 +142,8 @@ class _CartScreenState extends State<CartScreen> {
                                           text: TextSpan(
                                               text: 'Price: ' r"$",
                                               style: TextStyle(
-                                                  color: Colors.blueGrey.shade800,
+                                                  color:
+                                                      Colors.blueGrey.shade800,
                                                   fontSize: 16.0),
                                               children: [
                                                 TextSpan(
@@ -151,7 +158,9 @@ class _CartScreenState extends State<CartScreen> {
                                     ),
                                   ),
                                 ),
-                                Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
                                   children: [
                                     GestureDetector(
                                         onTap: () {
@@ -165,7 +174,9 @@ class _CartScreenState extends State<CartScreen> {
                                           Icons.delete,
                                           color: Colors.red.shade800,
                                         )),
-                                        SizedBox(height: 15,),
+                                    SizedBox(
+                                      height: 15,
+                                    ),
                                     ValueListenableBuilder<int>(
                                         valueListenable:
                                             provider.cart[index].quantity!,
@@ -291,21 +302,41 @@ class PlusMinusButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-      SizedBox(width: 10,),  Container(
-          alignment: Alignment.center,
-      
+        SizedBox(
+          width: 10,
+        ),
+        Container(
+            alignment: Alignment.center,
             decoration: BoxDecoration(
                 color: Colors.black.withOpacity(.2),
                 borderRadius: BorderRadius.circular(50)),
             child: GestureDetector(
-                onTap: deleteQuantity, child:  Center(child: Icon(Icons.remove,size: 22,)))),
-     SizedBox(width: 10,),   Text(text,style: TextStyle(fontSize: 17 ),),SizedBox(width: 10,),
+                onTap: deleteQuantity,
+                child: Center(
+                    child: Icon(
+                  Icons.remove,
+                  size: 22,
+                )))),
+        SizedBox(
+          width: 10,
+        ),
+        Text(
+          text,
+          style: TextStyle(fontSize: 17),
+        ),
+        SizedBox(
+          width: 10,
+        ),
         Container(
             decoration: BoxDecoration(
                 color: Colors.black.withOpacity(.2),
                 borderRadius: BorderRadius.circular(50)),
             child: GestureDetector(
-                onTap: addQuantity, child: const Icon(Icons.add,size: 22,))),
+                onTap: addQuantity,
+                child: const Icon(
+                  Icons.add,
+                  size: 22,
+                ))),
       ],
     );
   }

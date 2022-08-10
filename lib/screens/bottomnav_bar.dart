@@ -1,22 +1,26 @@
 import 'package:fashion_design/main.dart';
+import 'package:fashion_design/providers/tokenstoreprovider.dart';
 import 'package:fashion_design/screens/cart_screen.dart';
 import 'package:fashion_design/screens/login_signup.dart/login_and_signup.dart';
 import 'package:fashion_design/screens/product_list.dart';
 import 'package:fashion_design/screens/product_page.dart';
 import 'package:flutter/material.dart';
 
-
-
 import 'package:badges/badges.dart';
 import 'package:provider/provider.dart';
 
+import '../Google_login/signin_screen.dart';
+import '../Google_login/userProfile_screen.dart';
 import '../providers/cart_provider.dart';
 
 class BottomNavBar extends StatefulWidget {
   BottomNavBar(
-      {this.currentTab = 0, this.currentScreen = const MyHomePage()});
+      {this.currentTab = 0,
+      this.currentScreen = const MyHomePage(),
+      this.fromdetailPage = false});
   int currentTab = 0;
-  Widget currentScreen = MyHomePage();
+  bool fromdetailPage = false;
+  Widget currentScreen ;
   @override
   _BottomNavBarState createState() =>
       _BottomNavBarState(currentTab, currentScreen);
@@ -27,17 +31,32 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   _BottomNavBarState(this.currentTab, this.currentScreen);
   int currentTab; // to keep track of active tab index
+  TokenProvider? tokenProvider;
   final List<Widget> screens = [
-    MyHomePage(),
-   paginationpage2(),
+     MyHomePage(),
+    paginationpage2(),
     CartScreen(),
-    LoginPage(),
-  ]; // to store nested tabs
+  UserInfoScreen(),
+   
+  ];
+  bool islogin = true;
+  @override
+  void initState() {
+    TokenProvider tokenProvider =
+        Provider.of<TokenProvider>(context, listen: false);
+    tokenProvider.gettoken();
+
+    // TODO: implement initState
+    super.initState();
+  }
+
+  // to store nested tabs
   final PageStorageBucket bucket = PageStorageBucket();
   Widget currentScreen; //= Home_Page(); // Our first view in viewport
   int itemCount = 0;
   @override
   Widget build(BuildContext context) {
+    TokenProvider tokenProvider = Provider.of<TokenProvider>(context);
     return Scaffold(
       body: PageStorage(
         child: currentScreen,
@@ -66,13 +85,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
         // shape: CircularNotchedRectangle(),
         // notchMargin: 6,
         child: Container(
-          height: 60,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Row(
-               // crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            color: Colors.grey[300],
+            height: 60,
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   MaterialButton(
                     minWidth: 40,
@@ -88,14 +104,15 @@ class _BottomNavBarState extends State<BottomNavBar> {
                       children: <Widget>[
                         Icon(
                           Icons.home,
-                          color:
-                              currentTab == 0 ? Color(0xFFE37D4E) : Colors.grey,
+                          color: currentTab == 0
+                              ? Color.fromRGBO(102, 117, 102, 1)
+                              : Colors.grey,
                         ),
                         Text(
                           'Home',
                           style: TextStyle(
                             color: currentTab == 0
-                                ? Color(0xFFE37D4E)
+                                ? Color.fromRGBO(102, 117, 102, 1)
                                 : Colors.grey,
                           ),
                         ),
@@ -116,28 +133,24 @@ class _BottomNavBarState extends State<BottomNavBar> {
                       children: <Widget>[
                         Icon(
                           Icons.favorite_border_outlined,
-                          color:
-                              currentTab == 1 ? Color(0xFFE37D4E) : Colors.grey,
+                          color: currentTab == 1
+                              ? Color.fromRGBO(102, 117, 102, 1)
+                              : Colors.grey,
                         ),
                         Text(
-                          'Favorite',
+                          'Pagination',
                           style: TextStyle(
                             color: currentTab == 1
-                                ? Color(0xFFE37D4E)
+                                ? Color.fromRGBO(102, 117, 102, 1)
                                 : Colors.grey,
                           ),
                         ),
                       ],
                     ),
-                  )
-                ],
-              ),
+                  ),
 
-              // Right Tab bar icons
+                  // Right Tab bar icons
 
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
                   MaterialButton(
                     minWidth: 40,
                     onPressed: () {
@@ -150,27 +163,30 @@ class _BottomNavBarState extends State<BottomNavBar> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Badge(badgeContent: Consumer<CartProvider>(
-              builder: (context, value, child) {
-                return Text(
-                  value.counter.toString(),
-                  style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                );
-              },
-            ),
-          //  position: const BadgePosition(start: 30, bottom: 30),
+                        Badge(
+                          badgeContent: Consumer<CartProvider>(
+                            builder: (context, value, child) {
+                              return Text(
+                                value.counter.toString(),
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              );
+                            },
+                          ),
+                          //  position: const BadgePosition(start: 30, bottom: 30),
                           child: Icon(
                             Icons.shopping_cart,
-                            color:
-                                currentTab == 2 ? Color(0xFFE37D4E) : Colors.grey,
+                            color: currentTab == 2
+                                ? Color.fromRGBO(102, 117, 102, 1)
+                                : Colors.grey,
                           ),
                         ),
                         Text(
                           'Cart',
                           style: TextStyle(
                             color: currentTab == 2
-                                ? Color(0xFFE37D4E)
+                                ? Color.fromRGBO(102, 117, 102, 1)
                                 : Colors.grey,
                           ),
                         ),
@@ -181,8 +197,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
                     minWidth: 40,
                     onPressed: () {
                       setState(() {
-                        currentScreen =
-                            LoginPage(); // if user taps on this dashboard tab will be active
+                        tokenProvider.islogged == true
+                            ? (currentScreen = UserInfoScreen())
+                            : (currentScreen =
+                                LogginScreen()); // if user taps on this dashboard tab will be active
                         currentTab = 3;
                       });
                     },
@@ -191,25 +209,22 @@ class _BottomNavBarState extends State<BottomNavBar> {
                       children: <Widget>[
                         Icon(
                           Icons.account_circle,
-                          color:
-                              currentTab == 3 ? Color(0xFFE37D4E) : Colors.grey,
+                          color: currentTab == 3
+                              ? Color.fromRGBO(102, 117, 102, 1)
+                              : Colors.grey,
                         ),
                         Text(
                           'Profile',
                           style: TextStyle(
                             color: currentTab == 3
-                                ? Color(0xFFE37D4E)
+                                ? Color.fromRGBO(102, 117, 102, 1)
                                 : Colors.grey,
                           ),
                         ),
                       ],
                     ),
                   ),
-                ],
-              )
-            ],
-          ),
-        ),
+                ])),
       ),
     );
   }
