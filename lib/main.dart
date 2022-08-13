@@ -1,255 +1,252 @@
-import 'package:fashion_design/Api_Service.dart/hotDeal.dart';
-import 'package:fashion_design/Model/subCategoriesModel.dart';
-import 'package:fashion_design/Provider/banner_provider.dart';
-import 'package:fashion_design/Provider/brand_provider.dart';
-import 'package:fashion_design/Provider/categories_provider.dart';
-import 'package:fashion_design/Provider/subCategories_provider.dart';
-import 'package:fashion_design/Screen_Page/all_brands.dart';
-import 'package:fashion_design/Screen_Page/home_page.dart';
+import 'dart:convert';
+
 import 'package:fashion_design/otp_verification/otp_senderPage.dart';
 import 'package:fashion_design/providers/cart_provider.dart';
 import 'package:fashion_design/providers/login_signup.dart';
+import 'package:fashion_design/providers/pagination_provider.dart';
 import 'package:fashion_design/providers/product_provider.dart';
+import 'package:fashion_design/providers/tokenstoreprovider.dart';
+import 'package:fashion_design/screens/bottomnav_bar.dart';
 import 'package:fashion_design/screens/login_signup.dart/login_and_signup.dart';
+import 'package:fashion_design/screens/pagination_page.dart';
 import 'package:fashion_design/screens/product_list.dart';
 import 'package:fashion_design/screens/product_page.dart';
+import 'package:fashion_design/screens/products_details.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/shims/dart_ui_real.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
-
+import 'package:http/http.dart' as http;
 import 'Google_login/signin_screen.dart';
 
-void main()async {
-   WidgetsFlutterBinding.ensureInitialized();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MultiProvider(
     providers: [
-       ChangeNotifierProvider<CartProvider>(
-            create: ((context) => CartProvider())),
-        ChangeNotifierProvider<ProductProvider>(
-            create: ((context) => ProductProvider())),
-             ChangeNotifierProvider<SignupLogicModel>(
-            create: ((context) => SignupLogicModel())),
-      ChangeNotifierProvider<BannerProvider>(
-          create: ((context) => BannerProvider())),
-            ChangeNotifierProvider<BrandProvider>(
-          create: ((context) => BrandProvider())),
-      ChangeNotifierProvider<CategoriesProvider>(
-          create: ((context) => CategoriesProvider())),
-      ChangeNotifierProvider<HotDealsProvider>(
-          create: ((context) => HotDealsProvider())),
-      ChangeNotifierProvider(create: ((context) => SubCategoriesProvider()))
+      ChangeNotifierProvider<CartProvider>(
+          create: ((context) => CartProvider())),
+      ChangeNotifierProvider<ProductProvider>(
+          create: ((context) => ProductProvider())),
+      ChangeNotifierProvider<SignupLogicModel>(
+          create: ((context) => SignupLogicModel())),
+       ChangeNotifierProvider<TokenProvider>(
+      create: ((context) => TokenProvider())),
     ],
     child: MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginPage (),
+      home: LogginScreen(),
     ),
   ));
 }
-// import 'package:flutter/material.dart';
-// import 'package:easy_sidemenu/easy_sidemenu.dart';
 
-// void main() {
-//   runApp(const MyApp());
-// }
+class paginationpage2 extends StatefulWidget {
+  const paginationpage2({Key? key}) : super(key: key);
 
-// class MyApp extends StatelessWidget {
-//   const MyApp({Key? key}) : super(key: key);
+  @override
+  _paginationpage2State createState() => _paginationpage2State();
+}
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'easy_sidemenu Demo',
-//       theme: ThemeData(
-//         primarySwatch: Colors.blue,
-//       ),
-//       home: const MyHomePage(title: 'easy_sidemenu Demo'),
-//       debugShowCheckedModeBanner: false,
-//     );
-//   }
-// }
+class _paginationpage2State extends State<paginationpage2> {
+  // We will fetch data from this Rest api
+  final _baseUrl = 'https://jsonplaceholder.typicode.com/posts';
 
+  // At the beginning, we fetch the first 20 posts
+   int _page = 0;
+  int _limit = 20;
 
+  // There is next page or not
+  bool _hasNextPage = true;
 
+  // Used to display loading indicators when _firstLoad function is running
+  bool _isFirstLoadRunning = false;
 
-// class MyHomePage extends StatefulWidget {
-//   const MyHomePage({Key? key, required this.title}) : super(key: key);
+  // Used to display loading indicators when _loadMore function is running
+  bool _isLoadMoreRunning = false;
 
-//   final String title;
+  // This holds the posts fetched from the server
+  List _posts = [];
 
-//   @override
-//   _MyHomePageState createState() => _MyHomePageState();
-// }
+  // This function will be called when the app launches (see the initState function)
+  void _firstLoad() async {
+    setState(() {
+      _isFirstLoadRunning = true;
+    });
+    try {
+      final res = await http.get(
+          Uri.parse('$_baseUrl?_page=$_page&_limit=$_limit'));
+      setState(() {
+        _posts = json.decode(res.body);
+      });
+    } catch (err) {
+      print('Something went wrong');
+    }
 
-// class _MyHomePageState extends State<MyHomePage> {
-//   PageController page = PageController();
+    setState(() {
+      _isFirstLoadRunning = false;
+    });
+  }
 
-//   List datalist=[1,2,3,4,5,6,7,8];
+  // This function will be triggered whenver the user scroll
+  // to near the bottom of the list view
+  void _loadMore() async {
+    if (_hasNextPage == true &&
+        _isFirstLoadRunning == false &&
+        _isLoadMoreRunning == false &&
+        _controller.position.extentAfter < 300) {
+      setState(() {
+        _isLoadMoreRunning = true; // Display a progress indicator at the bottom
+      });
+      _page += 1; // Increase _page by 1
+      try {
+        final res = await http.get(Uri.parse(
+            '$_baseUrl?_page=$_page&_limit=$_limit'));
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text(widget.title),
-//         centerTitle: true,
-//       ),
-//       body: Row(
-//         mainAxisAlignment: MainAxisAlignment.start,
-//         children: [
-//           SideMenu(
-//             controller: page,
-//             // onDisplayModeChanged: (mode) {
-//             //   print(mode);
-//             // },
-//             style: SideMenuStyle(
-//               openSideMenuWidth: 400,
-//               decoration: BoxDecoration(
-//               color: Colors.black45
-//             ),
-//               displayMode: SideMenuDisplayMode.auto,
-//               hoverColor: Colors.blue[100],
-//               selectedColor: Colors.lightBlue,
-//               selectedTitleTextStyle: const TextStyle(color: Colors.white),
-//               selectedIconColor: Colors.white,
-//               // decoration: BoxDecoration(
-//               //   borderRadius: BorderRadius.all(Radius.circular(10)),
-//               // ),
-//               // backgroundColor: Colors.blueGrey[700]
-//             ),
-//             title: Column(
-//               children: [
-//                 ConstrainedBox(
-//                   constraints: const BoxConstraints(
-//                     maxHeight: 150,
-//                     maxWidth: 150,
-//                   ),
-                  
-//                 ),
-//                 const Divider(
-//                   indent: 8.0,
-//                   endIndent: 8.0,
-//                 ),
-//               ],
-//             ),
-//             footer: const Padding(
-//               padding: EdgeInsets.all(8.0),
-//               child: Text(
-//                 'mohada',
-//                 style: TextStyle(fontSize: 15,color: Colors.black),
-//               ),
-//             ),
-       
-//             items: [
+        final List fetchedPosts = json.decode(res.body);
+        if (fetchedPosts.length > 0) {
+          setState(() {
+            _posts.addAll(fetchedPosts);
+          });
+        } else {
+          // This means there is no more data
+          // and therefore, we will not send another GET request
+          setState(() {
+            _hasNextPage = false;
+          });
+        }
+      } catch (err) {
+        print('Something went wrong!');
+      }
 
+      setState(() {
+        _isLoadMoreRunning = false;
+      });
+    }
+  }
 
+  // The controller for the ListView
+  late ScrollController _controller;
 
-//               SideMenuItem(
-//                 priority: 0,
-//                 title: '',
-//                 onTap: () {
-//                   page.jumpToPage(0);
-//                 },
-//                 icon: const Icon(Icons.home),
-//                 badgeContent: const Text(
-//                   '3',
-//                   style: TextStyle(color: Colors.white),
-//                 ),
-//               ),
-//               SideMenuItem(
-//                 priority: 1,
-//                 title: 'Users',
-//                 onTap: () {
-//                   page.jumpToPage(1);
-//                 },
-//                 icon: const Icon(Icons.supervisor_account),
-//               ),
-//               SideMenuItem(
-//                 priority: 2,
-//                 title: '',
-//                 onTap: () {
-//                   page.jumpToPage(2);
-//                 },
-//                 icon: const Icon(Icons.file_copy_rounded),
-//               ),
-//               SideMenuItem(
-//                 priority: 3,
-//                 title: '' ,
-//                 onTap: () {
-//                   page.jumpToPage(3);
-//                 },
-//                 icon: const Icon(Icons.download),
-//               ),
-//               SideMenuItem(
-//                // badgeContent:Scaffold(body: Container(child: Text('Allah Borosha'),)) ,
-//                 priority: 4,
-//                 title: '',
-//                 onTap: () {
-//                   page.jumpToPage(4);
-//                 },
-//                 icon: const Icon(Icons.settings),
-//               ),
-//               SideMenuItem(
-//                 priority: 6,
-//                 title: 'Exit',
-//                 onTap: () async {},
-//                 icon: const Icon(Icons.exit_to_app),
-//               ),
-//             ],
-//           ),
-//           Expanded(
-//             child: PageView(
-//               controller: page,
-//               children: [
-//                 Container(
-//                   color: Colors.white,
-//                   child: const Center(
-//                     child: Text(
-//                       'Allah',
-//                       style: TextStyle(fontSize: 35),
-//                     ),
-//                   ),
-//                 ),
-//                 Container(
-//                   color: Colors.white,
-//                   child: const Center(
-//                     child: Text(
-//                       'Allah',
-//                       style: TextStyle(fontSize: 35),
-//                     ),
-//                   ),
-//                 ),
-//                 Container(
-//                   color: Colors.white,
-//                   child: const Center(
-//                     child: Text(
-//                       'Files',
-//                       style: TextStyle(fontSize: 35),
-//                     ),
-//                   ),
-//                 ),
-//                 Container(
-//                   color: Colors.white,
-//                   child: const Center(
-//                     child: Text(
-//                       'Download',
-//                       style: TextStyle(fontSize: 35),
-//                     ),
-//                   ),
-//                 ),
-//                 Container(
-//                   color: Colors.white,
-//                   child: const Center(
-//                     child: Text(
-//                       'Settings',
-//                       style: TextStyle(fontSize: 35),
-//                     ),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+  @override
+  void initState() {
+    super.initState();
+    _firstLoad();
+    _controller = new ScrollController()..addListener(_loadMore);
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_loadMore);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+     backgroundColor: Colors.grey,
+            elevation: 0,
+        title: Text('Pagination Products'),
+        centerTitle: true,
+      ),
+      body: _isFirstLoadRunning
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Column(
+              children: [
+                Expanded(
+                  child: StaggeredGridView.countBuilder(
+                      controller: _controller,
+                      staggeredTileBuilder: (int index) =>
+                          new StaggeredTile.count(2, index.isEven ? 2 : 1),
+                      mainAxisSpacing: 1.0,
+                      crossAxisSpacing: 1.0,
+                      crossAxisCount: 4,
+                      shrinkWrap: true,
+                      // physics: NeverScrollableScrollPhysics(),
+                      itemCount: _posts.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: ((context) => ProductsDetails(
+                                        // productPrice: productProvider
+                                        //         .data_list[index]
+                                        //     ['price'],
+                                        // productName: productProvider
+                                        //         .data_list[index]
+                                        //     ['title'],
+                                        // products_details:
+                                        //     productProvider
+                                        //             .data_list[index]
+                                        //         ['description'],
+                                        // productsImage: productProvider
+                                        //         .data_list[index]
+                                        //     ['image'],
+                                        ))));
+                          },
+                          child: Container(
+                            child: Card(
+                                child: Column(
+                              children: [
+                                // Expanded(
+                                //   child: Container(
+                                //       child: Image.network(
+                                //     _posts[index]['download_url'].toString(),
+                                //     fit: BoxFit.fill,
+                                //     width: double.infinity,
+                                //   )),
+                                // ),
+                                  Text(
+                                  _posts[index]['id'].toString(),
+                                  maxLines: 1,
+                                  style: TextStyle(),
+                                ),
+                                Text(
+                                  _posts[index]['body'].toString(),
+                                  maxLines: 1,
+                                  style: TextStyle(),
+                                ),
+                                Text(
+                                  _posts[index]['title'].toString(),
+                                  style: TextStyle(),
+                                ),
+                              ],
+                            )),
+                          ),
+                        );
+                      }),
+                ),
+
+                // when the _loadMore function is running
+                if (_isLoadMoreRunning == true)
+                   Padding(
+                      padding: const EdgeInsets.only(top: 10, bottom: 10),
+                      child: Center(
+                        child:  Container(
+                   // color: Colors.white,
+                    child: Center(
+                      child: Text('Loading More Products',style: TextStyle(color: Colors.blue,fontWeight: FontWeight.w600),),
+                    ),
+                  ),
+                      ),
+                    ),
+
+                // When nothing else to load
+                if (_hasNextPage == false)
+                  Container(
+                    padding: const EdgeInsets.only(top: 0, bottom: 0),
+                    //color: Colors.amber,
+                    child: Center(
+                      child: Text('You have fetched all of the content',style:TextStyle(color:Colors.red,fontWeight:FontWeight.w600,),
+                    ),
+                  ),
+          )],
+            ),
+    );
+  }
+}

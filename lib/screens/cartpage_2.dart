@@ -1,29 +1,27 @@
 import 'package:badges/badges.dart';
 import 'package:fashion_design/database/db_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:provider/provider.dart';
 
 import '../models/cart_model.dart';
 import '../providers/cart_provider.dart';
 
-class CartScreen extends StatefulWidget {
-  const CartScreen({
+class CartScreen2 extends StatefulWidget {
+  const CartScreen2({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<CartScreen> createState() => _CartScreenState();
+  State<CartScreen2> createState() => _CartScreenState();
 }
 
-class _CartScreenState extends State<CartScreen> {
+class _CartScreenState extends State<CartScreen2> {
   DBHelper? dbHelper = DBHelper();
   List<bool> tapped = [];
 
   @override
   void initState() {
-    setState(() {
-      
-    });
     super.initState();
     context.read<CartProvider>().getData();
   }
@@ -33,9 +31,20 @@ class _CartScreenState extends State<CartScreen> {
     final cart = Provider.of<CartProvider>(context);
     return Scaffold(
       appBar: AppBar(
+        leading: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Icon(
+              Icons.arrow_back_ios,
+              color: Colors.black,
+            )),
         centerTitle: true,
-        backgroundColor: Colors.grey,elevation: 0,
-        title: const Text(' Shopping Cart'),
+        backgroundColor: Colors.grey[300],
+        title: const Text(
+          ' Shopping Cart',
+          style: TextStyle(color: Colors.black),
+        ),
         actions: [
           // Badge(
           //   badgeContent: Consumer<CartProvider>(
@@ -164,10 +173,12 @@ class _CartScreenState extends State<CartScreen> {
                                   children: [
                                     GestureDetector(
                                         onTap: () {
-                                          dbHelper!.deleteCartItem(
-                                              provider.cart[index].id!);
-                                          provider.removeItem(
-                                              provider.cart[index].id!);
+                                          dbHelper!.deleteCartItem(int.parse(
+                                              provider.cart[index].id!
+                                                  .toString()));
+                                          provider.removeItem(int.parse(provider
+                                              .cart[index].id!
+                                              .toString()));
                                           provider.removeCounter();
                                         },
                                         child: Icon(
@@ -355,12 +366,10 @@ class ReusableWidget extends StatelessWidget {
         children: [
           Text(
             title,
-            style: Theme.of(context).textTheme.subtitle1,
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
           ),
-          Text(
-            value.toString(),
-            style: Theme.of(context).textTheme.subtitle2,
-          ),
+          Text(value.toString(),
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
         ],
       ),
     );

@@ -11,10 +11,10 @@ class Cart {
   final String? image;
 
   Cart(
-      {required this.id,
-      required this.productId,
+      {this.id,
+       this.productId,
       required this.productName,
-      required this.initialPrice,
+    this.initialPrice,
       required this.productPrice,
       required this.quantity,
       required this.unitTag,

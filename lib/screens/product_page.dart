@@ -1,15 +1,21 @@
+import 'package:expandable/expandable.dart';
+import 'package:fashion_design/providers/cart_provider.dart';
+import 'package:fashion_design/screens/login_signup.dart/login_and_signup.dart';
+import 'package:fashion_design/screens/products_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import 'package:provider/provider.dart';
 
-import '../Google_login/userProfile_screen.dart';
+import '../api_service/pagination_service.dart';
 import '../providers/product_provider.dart';
+
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
-
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -24,17 +30,22 @@ class _MyHomePageState extends State<MyHomePage> {
     await googleSignIn.signOut();
     await _auth.signOut();
   }
+
   @override
   void initState() {
     ProductProvider productProvider =
         Provider.of<ProductProvider>(context, listen: false);
     productProvider.getdata();
-
+    CartProvider cart = Provider.of<CartProvider>(context, listen: false);
+    cart.getCounter();
     super.initState();
   }
 
   Widget build(BuildContext context) {
     ProductProvider productProvider = Provider.of<ProductProvider>(
+      context,
+    );
+    CartProvider cart = Provider.of<CartProvider>(
       context,
     );
     List men = productProvider.data_list
@@ -70,22 +81,32 @@ class _MyHomePageState extends State<MyHomePage> {
             backgroundColor: Colors.grey,
             elevation: 0,
             title: Text("BPPSHOP "),
-         actions: [
-          IconButton(onPressed: (){
-              // });
-                        signOut();
-                        // setState(() {
-                        //   _isSigningOut = false;
-                        // });
-                       // Navigator.pop(context);
-          }, icon: Icon(Icons.delete))
-         ], ),
+            actions: [
+              // MaterialButton(
+              //     onPressed: () {
+              //       signOut();
+
+              //       Navigator.push(context,
+              //           MaterialPageRoute(builder: (context) => LoginPage()));
+              //     },
+              //     child: Container(
+              //       color: Colors.blueGrey,
+              //       padding: EdgeInsets.all(10),
+              //       child: Text('SignOut'),
+              //     )),
+              // IconButton(
+              //     onPressed: () {
+              //       signOut();
+
+              //       Navigator.pop(context);
+              //     },
+              //     icon: Icon(Icons.delete))
+            ],
+          ),
           body: Padding(
             padding: EdgeInsets.all(3.0),
             child: Column(
               children: [
-
-                
                 Container(
                   width: double.infinity,
                   height: 45,
@@ -125,27 +146,88 @@ class _MyHomePageState extends State<MyHomePage> {
                               physics: NeverScrollableScrollPhysics(),
                               itemCount: productProvider.data_list.length,
                               itemBuilder: (BuildContext context, int index) {
-                                return Card(
-                                    child: Column(
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                          child: Image.network(productProvider
-                                              .data_list[index]['image']
-                                              .toString())),
-                                    ),
-                                    Text(
-                                      productProvider.data_list[index]['title']
-                                          .toString(),
+                                return GestureDetector(
+                                  onTap: () {
+                                    var id =
+                                        productProvider.data_list[index]['id'];
+                                    var price = productProvider.data_list[index]
+                                        ['price'];
+                                    // var name = productProvider.data_list[index]
+                                    //     ['title'];
+                                    // var details = productProvider
+                                    //     .data_list[index]['description'];
+                                    // var image = productProvider.data_list[index]
+                                    //     ['image'];
+                                   // print(price);
+                                    //print(id);
+                                    showModalBottomSheet(
+                                        useRootNavigator: true,
+                                         isScrollControlled: true,
+                                        context: context,
+                                        builder: (BuildContext context) => Container(
+                                            height: 500,
+                                            child:
+                                            ProductsDetails(
+                                              productId: id.toString(),
+                                                productPrice: price.toInt(),
+                                                productName: productProvider
+                                                        .data_list[index]
+                                                    ['title'],
+                                                products_details:
+                                                    productProvider
+                                                            .data_list[index]
+                                                        ['description'],
+                                                productsImage: productProvider
+                                                        .data_list[index]
+                                                    ['image'],
+                                              ))
+                                            );
+                                    // Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //         builder: ((context) =>
+                                    //             ProductsDetails(
+                                    //               productPrice: productProvider
+                                    //                       .data_list[index]
+                                    //                   ['price'],
+                                    //               productName: productProvider
+                                    //                       .data_list[index]
+                                    //                   ['title'],
+                                    //               products_details:
+                                    //                   productProvider
+                                    //                           .data_list[index]
+                                    //                       ['description'],
+                                    //               productsImage: productProvider
+                                    //                       .data_list[index]
+                                    //                   ['image'],
+                                    //             ))));
+                                  },
+                                  child: Container(
+                                    child: Card(
+                                        child: Column(
+                                      children: [
+                                        Expanded(
+                                          child: Container(
+                                              child: Image.network(
+                                                  productProvider
+                                                      .data_list[index]['image']
+                                                      .toString())),
+                                        ),
+                                        Text(
+                                          productProvider.data_list[index]
+                                                  ['title']
+                                              .toString(),
                                           maxLines: 1,
-                                      style: TextStyle(),
-                                    ),
-                                    Text(
-                                      'Price ${productProvider.data_list[index]['price'].toString()}',
-                                      style: TextStyle(),
-                                    )
-                                  ],
-                                ));
+                                          style: TextStyle(),
+                                        ),
+                                        Text(
+                                          'Price ${productProvider.data_list[index]['price'].toString()}',
+                                          style: TextStyle(),
+                                        )
+                                      ],
+                                    )),
+                                  ),
+                                );
                               })
                         ],
                       ),
@@ -190,38 +272,35 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                     SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          GridView.builder(
-                              itemCount: jewelery.length,
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                childAspectRatio: 1,
+                      child: GridView.builder(
+                          itemCount: jewelery.length,
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 1,
+                          ),
+                          itemBuilder: (context, index) {
+                            return Card(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                      child: Expanded(
+                                    child: Image.network(
+                                        jewelery[index]['image'].toString()),
+                                  )),
+                                  Text(jewelery[index]['title'].toString()),
+                                  Text(
+                                    'Price ${jewelery[index]['price'].toString()}',
+                                    style: TextStyle(),
+                                  )
+                                ],
                               ),
-                              itemBuilder: (context, index) {
-                                return Card(
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                          child: Expanded(
-                                        child: Image.network(jewelery[index]
-                                                ['image']
-                                            .toString()),
-                                      )),
-                                      Text(jewelery[index]['title'].toString()),
-                                      Text(
-                                        'Price ${jewelery[index]['price'].toString()}',
-                                        style: TextStyle(),
-                                      )
-                                    ],
-                                  ),
-                                );
-                              })
-                        ],
-                      ),
+                            );
+                          }),
                     ),
                     SingleChildScrollView(
                       child: Column(
@@ -300,6 +379,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+// 
 
 class MyTabbedPage extends StatefulWidget {
   const MyTabbedPage({Key? key}) : super(key: key);

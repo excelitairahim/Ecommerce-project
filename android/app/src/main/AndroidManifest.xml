@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.fashion_design">
+   <uses-permission android:name="android.permission.SEND_SMS"/>
    <application
         android:label="fashion_design"
         android:name="${applicationName}"

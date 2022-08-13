@@ -12,5 +12,9 @@ static  final Color yellow_color=Color(0xffFFA800);
 static final Color grey_color=Color(0xffFFEFE5);
 static final Color black_color=Colors.black;
 static final Color soft_grey_color=Color(0xffD9D9D9);
+static final kTextColor = Color(0xFF535353);
+static final  kTextLightColor = Color(0xFFACACAC);
+
+static final kDefaultPaddin = 20.0;
 
 }

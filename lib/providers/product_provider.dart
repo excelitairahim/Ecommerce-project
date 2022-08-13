@@ -1,4 +1,4 @@
-import 'package:fashion_design/api_service/api_service.dart';
+import 'package:fashion_design/api_service/tuser_api_service.dart';
 import 'package:flutter/material.dart';
 
 
@@ -6,9 +6,10 @@ class ProductProvider extends ChangeNotifier {
   List<Map<String,dynamic>> data_list = [];
   bool isloading = false;
   getdata() async {
+    isloading=true;
     var data = await ApiService().getdata();
     data_list = data;
-
+isloading=true;
 // List <List<Map<String,dynamic>>> data_again=[];
 
   //   Map<String, Map<String, dynamic>> data_again = Map();
