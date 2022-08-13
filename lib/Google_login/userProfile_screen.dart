@@ -140,7 +140,7 @@ print(  'name ${tokenProvider.usernam}');
                         //   _isSigningOut = false;
                         // });
                         print(tokenProvider.islogged);
-                       // Navigator.pushReplacement(context, MaterialPageRoute(builder: ((context) => BottomNavBar())));
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: ((context) => LogginScreen())));
                       },
                       child: Padding(
                         padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
