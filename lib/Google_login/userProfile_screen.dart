@@ -39,8 +39,9 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
     // _user = widget._user;
 //print(tokenProvider.token);
 tokenProvider.gettoken();
-print(  'ddddddd${tokenProvider.useremail}');
-print(  'ddddddd${tokenProvider.usernam}');
+
+print(  'Email ${tokenProvider.useremail}');
+print(  'name ${tokenProvider.usernam}');
     super.initState();
    // gettoken();
   }
@@ -52,6 +53,8 @@ print(  'ddddddd${tokenProvider.usernam}');
   @override
   Widget build(BuildContext context) {
       TokenProvider tokenProvider=Provider.of(context,);
+      tokenProvider.useremail;
+      tokenProvider.usernam;
     return Scaffold(
     appBar: AppBar(title: Text('Profile'),centerTitle: true,elevation: 0,backgroundColor: Colors.grey,),
       body: SafeArea(

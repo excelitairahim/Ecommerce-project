@@ -197,10 +197,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
                     minWidth: 40,
                     onPressed: () {
                       setState(() {
-                        tokenProvider.islogged == true
-                            ? (currentScreen = UserInfoScreen())
-                            : (currentScreen =
-                                LogginScreen()); // if user taps on this dashboard tab will be active
+                    
+                        (currentScreen = UserInfoScreen());
+                           // if user taps on this dashboard tab will be active
                         currentTab = 3;
                       });
                     },

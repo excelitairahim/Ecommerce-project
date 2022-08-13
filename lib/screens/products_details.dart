@@ -105,7 +105,7 @@ class _ProductsDetailsState extends State<ProductsDetails> {
               position: const BadgePosition(start: 30, bottom: 30),
               child: IconButton(
                 onPressed: () {
-                  Navigator.pushReplacement(
+                  Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => BottomNavBar(
