@@ -2,6 +2,7 @@ import 'package:fashion_design/main.dart';
 import 'package:fashion_design/providers/tokenstoreprovider.dart';
 import 'package:fashion_design/screens/cart_screen.dart';
 import 'package:fashion_design/screens/login_signup.dart/login_and_signup.dart';
+import 'package:fashion_design/screens/pagination_page.dart';
 import 'package:fashion_design/screens/product_list.dart';
 import 'package:fashion_design/screens/product_page.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   TokenProvider? tokenProvider;
   final List<Widget> screens = [
      MyHomePage(),
-    paginationpage2(),
+    paginationpage(),
     CartScreen(),
   UserInfoScreen(),
    
@@ -124,7 +125,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                     onPressed: () {
                       setState(() {
                         currentScreen =
-                            paginationpage2(); // if user taps on this dashboard tab will be active
+                            paginationpage(); // if user taps on this dashboard tab will be active
                         currentTab = 1;
                       });
                     },

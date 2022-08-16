@@ -1,24 +1,23 @@
-import 'package:fashion_design/providers/pagination_provider.dart';
+
+import 'dart:convert';
+
 import 'package:fashion_design/screens/products_details.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:provider/provider.dart';
-
-import '../api_service/pagination_service.dart';
-import '../models/paginationModel.dart';
-
-class PaginationPage extends StatefulWidget {
-  const PaginationPage({Key? key}) : super(key: key);
+import 'package:http/http.dart' as http;
+class paginationpage extends StatefulWidget {
+  const paginationpage({Key? key}) : super(key: key);
 
   @override
-  State<PaginationPage> createState() => _PaginationPageState();
+  _paginationpageState createState() => _paginationpageState();
 }
 
-class _PaginationPageState extends State<PaginationPage> {
-  List<PaginationModel> pagi_datalist = [];
-  int _page = 1;
+class _paginationpageState extends State<paginationpage> {
+  // We will fetch data from this Rest api
+  final _baseUrl = 'https://jsonplaceholder.typicode.com/posts';
+
+  // At the beginning, we fetch the first 20 posts
+   int _page = 0;
   int _limit = 20;
 
   // There is next page or not
@@ -38,8 +37,16 @@ class _PaginationPageState extends State<PaginationPage> {
     setState(() {
       _isFirstLoadRunning = true;
     });
+    try {
+      final res = await http.get(
+          Uri.parse('$_baseUrl?_page=$_page&_limit=$_limit'));
+      setState(() {
+        _posts = json.decode(res.body);
+      });
+    } catch (err) {
+      print('Something went wrong');
+    }
 
-    fatchAyatList();
     setState(() {
       _isFirstLoadRunning = false;
     });
@@ -51,13 +58,31 @@ class _PaginationPageState extends State<PaginationPage> {
     if (_hasNextPage == true &&
         _isFirstLoadRunning == false &&
         _isLoadMoreRunning == false &&
-        _controller.position.extentAfter < 100) {
+        _controller.position.extentAfter < 300) {
       setState(() {
         _isLoadMoreRunning = true; // Display a progress indicator at the bottom
       });
       _page += 1; // Increase _page by 1
+      try {
+        final res = await http.get(Uri.parse(
+            '$_baseUrl?_page=$_page&_limit=$_limit'));
 
-      fatchAyatList();
+        final List fetchedPosts = json.decode(res.body);
+        if (fetchedPosts.length > 0) {
+          setState(() {
+            _posts.addAll(fetchedPosts);
+          });
+        } else {
+          // This means there is no more data
+          // and therefore, we will not send another GET request
+          setState(() {
+            _hasNextPage = false;
+          });
+        }
+      } catch (err) {
+        print('Something went wrong!');
+      }
+
       setState(() {
         _isLoadMoreRunning = false;
       });
@@ -66,27 +91,12 @@ class _PaginationPageState extends State<PaginationPage> {
 
   // The controller for the ListView
   late ScrollController _controller;
-  fatchAyatList() async {
-    var data = await PaginationService().get_pagination_service(_page, _limit);
-
-    setState(() {
-      pagi_datalist = data;
-    });
-  }
 
   @override
   void initState() {
+    super.initState();
     _firstLoad();
     _controller = new ScrollController()..addListener(_loadMore);
-
-    // PaginationProvider paginationProvider =
-    //     Provider.of<PaginationProvider>(context, listen: false);
-    // paginationProvider.getPagination();
-
-    //paginationProvider.firstLoad();
-
-    // TODO: implement initState
-    super.initState();
   }
 
   @override
@@ -97,20 +107,21 @@ class _PaginationPageState extends State<PaginationPage> {
 
   @override
   Widget build(BuildContext context) {
-    // PaginationProvider paginationProvider = Provider.of<PaginationProvider>(
-    //   context,
-    // );
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Products Pgination'),
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                  child: Column(
-                children: [
-                  StaggeredGridView.countBuilder(
+      appBar: AppBar(
+     backgroundColor: Colors.grey,
+            elevation: 0,
+        title: Text('Pagination Products'),
+        centerTitle: true,
+      ),
+      body: _isFirstLoadRunning
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Column(
+              children: [
+                Expanded(
+                  child: StaggeredGridView.countBuilder(
                       controller: _controller,
                       staggeredTileBuilder: (int index) =>
                           new StaggeredTile.count(2, index.isEven ? 2 : 1),
@@ -118,49 +129,54 @@ class _PaginationPageState extends State<PaginationPage> {
                       crossAxisSpacing: 1.0,
                       crossAxisCount: 4,
                       shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: pagi_datalist.length,
+                      // physics: NeverScrollableScrollPhysics(),
+                      itemCount: _posts.length,
                       itemBuilder: (BuildContext context, int index) {
                         return GestureDetector(
                           onTap: () {
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: ((context) => ProductsDetails(
-                            //             // productPrice: productProvider
-                            //             //         .data_list[index]
-                            //             //     ['price'],
-                            //             // productName: productProvider
-                            //             //         .data_list[index]
-                            //             //     ['title'],
-                            //             // products_details:
-                            //             //     productProvider
-                            //             //             .data_list[index]
-                            //             //         ['description'],
-                            //             // productsImage: productProvider
-                            //             //         .data_list[index]
-                            //             //     ['image'],
-                            //             ))));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: ((context) => ProductsDetails(
+                                        // productPrice: productProvider
+                                        //         .data_list[index]
+                                        //     ['price'],
+                                        // productName: productProvider
+                                        //         .data_list[index]
+                                        //     ['title'],
+                                        // products_details:
+                                        //     productProvider
+                                        //             .data_list[index]
+                                        //         ['description'],
+                                        // productsImage: productProvider
+                                        //         .data_list[index]
+                                        //     ['image'],
+                                        ))));
                           },
                           child: Container(
                             child: Card(
                                 child: Column(
                               children: [
-                                Expanded(
-                                  child: Container(
-                                      child: Image.network(
-                                    pagi_datalist[index].downloadUrl.toString(),
-                                    fit: BoxFit.fill,
-                                    width: double.infinity,
-                                  )),
-                                ),
-                                Text(
-                                  pagi_datalist[index].author.toString(),
+                                // Expanded(
+                                //   child: Container(
+                                //       child: Image.network(
+                                //     _posts[index]['download_url'].toString(),
+                                //     fit: BoxFit.fill,
+                                //     width: double.infinity,
+                                //   )),
+                                // ),
+                                  Text(
+                                  _posts[index]['id'].toString(),
                                   maxLines: 1,
                                   style: TextStyle(),
                                 ),
                                 Text(
-                                  pagi_datalist[index].height.toString(),
+                                  _posts[index]['body'].toString(),
+                                  maxLines: 1,
+                                  style: TextStyle(),
+                                ),
+                                Text(
+                                  _posts[index]['title'].toString(),
                                   style: TextStyle(),
                                 ),
                               ],
@@ -168,35 +184,33 @@ class _PaginationPageState extends State<PaginationPage> {
                           ),
                         );
                       }),
-                  if (_isLoadMoreRunning == true)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 0, bottom: 0),
+                ),
+
+                // when the _loadMore function is running
+                if (_isLoadMoreRunning == true)
+                   Padding(
+                      padding: const EdgeInsets.only(top: 10, bottom: 10),
                       child: Center(
                         child:  Container(
-                    color: Colors.white,
+                   // color: Colors.white,
                     child: Center(
-                      child: Text('Loading More Products'),
+                      child: Text('Loading More Products',style: TextStyle(color: Colors.blue,fontWeight: FontWeight.w600),),
                     ),
                   ),
                       ),
                     ),
 
-                  // When nothing else to load 
-                                  _hasNextPage == false?
+                // When nothing else to load
+                if (_hasNextPage == false)
                   Container(
-                    color: Colors.white,
+                    padding: const EdgeInsets.only(top: 0, bottom: 0),
+                    //color: Colors.amber,
                     child: Center(
-                      child: Text('You have fetched all of the content'),
+                      child: Text('You have fetched all of the content',style:TextStyle(color:Colors.red,fontWeight:FontWeight.w600,),
                     ),
-                  ): Container(
-                    color: Colors.white,
-                    child: Center(
-                      child: Text('You have fetched all of the content'),
-                    ),
-                  )],
-              ))
-            ],
-          ),
-        ));
+                  ),
+          )],
+            ),
+    );
   }
 }
