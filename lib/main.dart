@@ -43,6 +43,7 @@
 
 import 'dart:io';
 
+import 'package:fashion_design/screens/bottomnav_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -61,7 +62,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: SettingsUI()
+        home: BottomNavBar()
         // HomePage()
         //MyHomePage1(),
         );
